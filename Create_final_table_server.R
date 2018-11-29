@@ -25,7 +25,7 @@ final_table <- function(wd_annotation, wd_feature, data_feature_pls, data_featur
     feature_MTBNK <- feature_MTBNK[which(feature_MTBNK$p.value <= 0.04), c(1:2)]
     feature_PLSDA <- merge(feature_MTBNK, save.plsresults.allfeatures, by = c("mz","time"), all.X = T)
     feature_PLSDA <- feature_PLSDA[order(-feature_PLSDA$vip),]
-    rm(save.cv.accuracy, save.HMDB, save.KEGG, save.LipidMaps, save.mummichog_PLSDA_VIP2, save.plsresults.allfeatures, save.plsresults.sigfeatures, feature_MTBNK)
+    rm(save.cv.accuracy, save.mummichog_PLSDA_VIP2, save.plsresults.allfeatures, save.plsresults.sigfeatures, feature_MTBNK)
     
     ####################
     # pathway analysis - mummichog server
@@ -271,48 +271,34 @@ final_table <- function(wd_annotation, wd_feature, data_feature_pls, data_featur
 
 ## Now the problem is that we need to use mummichog 1 instead of mummichog 2!!
 
-HILIC_autism <- final_table(wd_annotation = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Annotation/sigfeature_annotation/",
-                            wd_feature = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/PANDA_output_PLSDA/",
-                            data_feature_pls = "Res_PLSDA_result_2018-09-08_vip2fc0.RData",
-                            data_feature_mummichogInput = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/HILIC_mummichog/mummichog_input_vip2fc0_2018-09-08.txt",
-                            wd_pathway = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/HILIC_mummichog/HILIC_mummichogOL_vip2fc0/tables/",
-                            data_verified = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Annotation/HILIC_annotation_verified.txt")
+pest_list = c("Pyrethroids", "Glyphosates", "Fungicides", "Neonicotinoids","OPs")
 
-C18_autism <- final_table(wd_annotation = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Annotation/sigfeature_annotation/",
-                          wd_feature = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/PANDA_output_PLSDA/",
-                          data_feature_pls = "Res_PLSDA_result_2018-09-17_vip2fc0.RData",
-                          data_feature_mummichogInput = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_mummichog/mummichog_input_vip2fc0_2018-09-17.txt",
-                          wd_pathway = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_mummichog/C18_mummichogOL_vip2fc0/tables",
-                          data_verified = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Annotation/C18_annotation_verified.txt")
+for(i in 1:length(pest_list)){
+  pest = pest_list[i]
+  HILIC <- final_table(wd_annotation = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Annotation/sigfeature_annotation/",
+                       wd_feature = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pest,"/PANDA_output_PLSDA/",sep=""),
+                       data_feature_pls = "Res_PLSDA_result_2018-11-28_vip2fc0.RData",
+                       data_feature_mummichogInput = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pest,"/HILIC_mummichog/mummichog_input_vip2fc0_2018-11-28.txt",sep=""),
+                       wd_pathway = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pest,"/HILIC_mummichog/result/tables/",sep=""),
+                       data_verified = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Annotation/HILIC_annotation_verified.txt")
+  HILIC <- HILIC[-which(is.na(HILIC$chemical_ID)&is.na(HILIC$pathway)&is.na(HILIC$Verified_KEGGID)&is.na(HILIC$Verified_HMDBID)),]
+  write.table(HILIC, file = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/Results/",pest,"/HILIC_final_table_1129.txt",sep=""), sep = "\t", row.names = F,quote = F)
+}
 
-HILIC_autism <- HILIC_autism[-which(is.na(HILIC_autism$chemical_ID)&is.na(HILIC_autism$pathway)&is.na(HILIC_autism$Verified_KEGGID)&is.na(HILIC_autism$Verified_HMDBID)),]
-C18_autism <- C18_autism[-which(is.na(C18_autism$chemical_ID)&is.na(C18_autism$pathway)&is.na(C18_autism$Verified_KEGGID)&is.na(C18_autism$Verified_HMDBID)),]
+for(i in 1:length(pest_list)){
+  pest = pest_list[i]
+  HILIC <- final_table(wd_annotation = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Annotation/sigfeature_annotation/",
+                       wd_feature = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pest,"/PANDA_output_PLSDA/",sep=""),
+                       data_feature_pls = "Res_PLSDA_result_2018-11-28_vip2fc0.RData",
+                       data_feature_mummichogInput = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pest,"/HILIC_mummichog/mummichog_input_vip2fc0_2018-11-28.txt",sep=""),
+                       wd_pathway = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pest,"/HILIC_mummichog/result/tables/",sep=""),
+                       data_verified = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Annotation/HILIC_annotation_verified.txt",
+                       whole_list = T)
+  HILIC <- HILIC[-which(is.na(HILIC$chemical_ID)&is.na(HILIC$pathway)&is.na(HILIC$Verified_KEGGID)&is.na(HILIC$Verified_HMDBID)),]
+  write.table(HILIC, file = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/Results/",pest,"/HILIC_whole_table_1129.txt",sep=""), sep = "\t", row.names = F,quote = F)
+}
 
-write.table(HILIC_autism, file = "C:/Users/QiYan/Dropbox/AIME/Results/Autism/HILIC_final_table_server_0920.txt", sep = "\t", row.names = F,quote = F)
-write.table(C18_autism, file = "C:/Users/QiYan/Dropbox/AIME/Results/Autism/C18_final_table_server_0920.txt", sep = "\t", row.names = F,quote = F)
 
-# Autism whole list
-HILIC_autism <- final_table(wd_annotation = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Annotation/sigfeature_annotation/",
-                            wd_feature = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/PANDA_output_PLSDA/",
-                            data_feature_pls = "Res_PLSDA_result_2018-09-08_vip2fc0.RData",
-                            data_feature_mummichogInput = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/HILIC_mummichog/mummichog_input_vip2fc0_2018-09-08.txt",
-                            wd_pathway = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/HILIC_mummichog/HILIC_mummichogOL_vip2fc0/tables/",
-                            data_verified = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Annotation/HILIC_annotation_verified.txt",
-                            whole_list = T)
-
-C18_autism <- final_table(wd_annotation = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Annotation/sigfeature_annotation/",
-                          wd_feature = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/PANDA_output_PLSDA/",
-                          data_feature_pls = "Res_PLSDA_result_2018-09-17_vip2fc0.RData",
-                          data_feature_mummichogInput = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_mummichog/mummichog_input_vip2fc0_2018-09-17.txt",
-                          wd_pathway = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_mummichog/C18_mummichogOL_vip2fc0/tables",
-                          data_verified = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Annotation/C18_annotation_verified.txt",
-                          whole_list = T)
-
-HILIC_autism <- HILIC_autism[-which(is.na(HILIC_autism$chemical_ID)&is.na(HILIC_autism$pathway)&is.na(HILIC_autism$Verified_KEGGID)&is.na(HILIC_autism$Verified_HMDBID)),]
-C18_autism <- C18_autism[-which(is.na(C18_autism$chemical_ID)&is.na(C18_autism$pathway)&is.na(C18_autism$Verified_KEGGID)&is.na(C18_autism$Verified_HMDBID)),]
-
-write.table(HILIC_autism, file = "C:/Users/QiYan/Dropbox/AIME/Results/Autism/HILIC_whole_table_server_0920.txt", sep = "\t", row.names = F,quote = F)
-write.table(C18_autism, file = "C:/Users/QiYan/Dropbox/AIME/Results/Autism/C18_whole_table_server_0920.txt", sep = "\t", row.names = F,quote = F)
 
 
 HILIC_common_ap <- HILIC_ap[which(HILIC_ap$mz %in% HILIC_autism$mz),]

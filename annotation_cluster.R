@@ -29,7 +29,7 @@
 library(xMSannotator)
 
 annotation <- function(wd, data, outloc, database, mode){
-  # setwd("C:/Users/QiYanYan/Dropbox/AIME/Panda_HILICpos/HILIC_Controls_ExpoUnexpo/PANDA_output_PLSDA")
+  # setwd("C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Controls_ExpoUnexpo/PANDA_output_PLSDA")
   # load(file = "Res_PLSDA_result_2018-05-31_vip2fc0.RData")
   setwd(wd)
   # setwd("/u/home/q/qyan/AIME/Annotation")
@@ -103,36 +103,36 @@ annotation <- function(wd, data, outloc, database, mode){
   # detach(pkg, character.only = TRUE)
 }
 
-annotation(wd = "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Controls_ExpoUnexpo/PANDA_input",
+annotation(wd = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Controls_ExpoUnexpo/PANDA_input",
            data = "C18_control_expo_unexpo_classification_nonorm.RData",
-           outloc = "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Controls_ExpoUnexpo/C18_Annotation/sigfeature_annotation/KEGG",
+           outloc = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Controls_ExpoUnexpo/C18_Annotation/sigfeature_annotation/KEGG",
            database = "KEGG",
            mode = "neg")
 
-annotation(wd = "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/PANDA_input",
+annotation(wd = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/PANDA_input",
            data = "C18_case_control_noexposure_classification_nonorm.RData",
-           outloc = "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_Annotation/sigfeature_annotation/HMDB",
+           outloc = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_Annotation/sigfeature_annotation/HMDB",
            database = "HMDB",
            mode = "neg")
-annotation(wd = "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/PANDA_input",
+annotation(wd = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/PANDA_input",
            data = "C18_case_control_noexposure_classification_nonorm.RData",
-           outloc = "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_Annotation/sigfeature_annotation/LipidMaps",
+           outloc = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_Annotation/sigfeature_annotation/LipidMaps",
            database = "LipidMaps",
            mode = "neg")
-annotation(wd = "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/PANDA_input",
+annotation(wd = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/PANDA_input",
            data = "C18_case_control_noexposure_classification_nonorm.RData",
-           outloc = "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_Annotation/sigfeature_annotation/KEGG",
+           outloc = "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Non_Exposed_CasesControls/C18_Annotation/sigfeature_annotation/KEGG",
            database = "KEGG",
            mode = "neg")
 
-annotation(wd = "C:/Users/QiYanYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/PANDA_input",
+annotation(wd = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/PANDA_input",
            data = "HILIC_case_control_noexposure_classification_nonorm.RData",
-           outloc = "C:/Users/QiYanYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/HILIC_Annotation/sigfeature_annotation/LipidMaps",
+           outloc = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Non_Exposed_CasesControls/HILIC_Annotation/sigfeature_annotation/LipidMaps",
            database = "LipidMaps",
            mode = "pos")
-annotation(wd = "C:/Users/QiYanYan/Dropbox/AIME/Panda_HILICpos/HILIC_Controls_ExpoUnexpo/PANDA_input",
+annotation(wd = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Controls_ExpoUnexpo/PANDA_input",
            data = "HILIC_control_expo_unexpo_classification_nonorm.RData",
-           outloc = "C:/Users/QiYanYan/Dropbox/AIME/Panda_HILICpos/HILIC_Controls_ExpoUnexpo/HILIC_Annotation/sigfeature_annotation/LipidMaps",
+           outloc = "C:/Users/QiYan/Dropbox/AIME/Panda_HILICpos/HILIC_Controls_ExpoUnexpo/HILIC_Annotation/sigfeature_annotation/LipidMaps",
            database = "LipidMaps",
            mode = "pos")
 
@@ -140,13 +140,13 @@ annotation(wd = "C:/Users/QiYanYan/Dropbox/AIME/Panda_HILICpos/HILIC_Controls_Ex
 # Annotate all features
 ############################
 library(xmsPANDA)
-setwd("C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/")
+setwd("C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/")
 
 # # class <- read.csv(file = "HILIC_classlabels_for_panda_all.txt", sep = '\t', header = T)
 # # feature <- read.csv(file = "HILIC_ftrsmzcalib_combat_ordered_all.txt", sep = '\t', header = T)
-# class <- "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_classlabels_for_panda_all.txt"
-# feature <- "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_ftrsmzcalib_combat_ordered_all.txt"
-# outloc <- "C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg"
+# class <- "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_classlabels_for_panda_all.txt"
+# feature <- "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_ftrsmzcalib_combat_ordered_all.txt"
+# outloc <- "C:/Users/QiYan/Dropbox/AIME/Panda_C18neg"
 # 
 # ready_for_regression<-data_preprocess(Xmat=NA,Ymat=NA,feature_table_file=feature,parentoutput_dir=outloc,class_labels_file=class,num_replicates=3,feat.filt.thresh=NA,
 #                                       summarize.replicates=TRUE,summary.method="median",all.missing.thresh=0,group.missing.thresh=0,
@@ -174,7 +174,7 @@ data(adduct_weights)
 
 dataA<-input_data
 
-outloc<-"C:/Users/QiYanYan/Dropbox/AIME/Panda_C18neg/C18_Annotation/sigfeature_annotation/HMDB"
+outloc<-"C:/Users/QiYan/Dropbox/AIME/Panda_C18neg/C18_Annotation/sigfeature_annotation/HMDB"
 
 max.mz.diff<-10  #mass search tolerance for DB matching in ppm
 max.rt.diff<-10 #retention time tolerance between adducts/isotopes
