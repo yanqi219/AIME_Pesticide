@@ -11,12 +11,12 @@ load(file = "HILIC_sample_link.rda")
 # Parameters
 #############################
 
-outdata_type = "redisual"   # "raw", "transformed", "redisual"
-pest = "OPs"   # "Pyrethroids", "Glyphosates", "Fungicides", "Neonicotinoids", "total"
+outdata_type = "raw"   # "raw", "transformed", "redisual"
+pest = "OPs"   # "Pyrethroids", "Glyphosates", "Fungicides", "Neonicotinoids", "OPs", total"
 outdata_loc = "C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_OPs/PANDA_input/"
-online = FALSE
+online = TRUE
 
-setwd("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_OPs/PANDA_input/")
+setwd(outdata_loc)
 
 #############################
 # Total/Each
@@ -212,6 +212,13 @@ if(outdata_type=="raw"){
 # Online/Offline
 #############################
 {
+  
+setwd(outdata_loc)
+  
+complete_flag <- na.omit(final_sample[,c(1,6,7,8)])
+complete_sub <- complete_flag$SampleID
+final_feature <- subset(final_feature, final_feature[,1] %in% complete_sub)
+final_sample <- subset(final_sample, final_sample[,1] %in% complete_sub)
   
 if(online){
 
