@@ -1,15 +1,19 @@
-# library(tidyverse)
 library(mixOmics)
 library(e1071)
 library(ROCR)
 library(RColorBrewer)
 library(ggrepel)
-# library(caret)
+
+# "Pyrethroids", "Glyphosates", "Fungicides", "Neonicotinoids", "OPs"
+pesticide_list <- c("Pyrethroids", "Glyphosates", "Fungicides", "Neonicotinoids")
+
+for(i in 1:length(pesticide_list)){
+  
+pesticide <- pesticide_list[i]
 
 #################################
 # Set universal parameters
 #################################
-is.residual = TRUE
 
 optimal_comp = FALSE
 components = 5
@@ -22,7 +26,7 @@ pred.eval.method = "BER"
 cluster.method = "dist" #"dist" or "bicor" #Residual can only use "dist"
 cpu = 4
 
-dir.folder <- "C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_OPs/"
+dir.folder <- paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pesticide,"/",sep = "")
 
 #################################
 # Start!
@@ -34,13 +38,9 @@ time.start <- proc.time()
 dir.temp <- paste(dir.folder,"PANDA_output_PLSDA",sep = "")
 setwd(dir.temp)
 
-if(is.residual == TRUE){
-  logfile <- paste("Res_Log_",Sys.Date(),"_vip",vip_threshold,"fc",foldchange_threshold,".log",sep = "")
-  pdf_file<-paste("Res_Output_",Sys.Date(),"_vip",vip_threshold,"fc",foldchange_threshold,".pdf",sep="")
-}else{
-  logfile <- paste("Log_",Sys.Date(),"_vip",vip_threshold,"fc",foldchange_threshold,".log",sep = "")
-  pdf_file<-paste("Output_",Sys.Date(),"_vip",vip_threshold,"fc",foldchange_threshold,".pdf",sep="")
-}
+logfile <- paste("Res_Log_",Sys.Date(),"_vip",vip_threshold,"fc",foldchange_threshold,".log",sep = "")
+pdf_file<-paste("Res_Output_",Sys.Date(),"_vip",vip_threshold,"fc",foldchange_threshold,".pdf",sep="")
+
 
 logfile <- file(logfile)
 sink(logfile) # sink()
@@ -58,8 +58,8 @@ setwd(dir.temp)
 {
 
 # For fold change
-
-load(file = "HILIC_OPs_transformed.RData")
+temp_filename <- paste("HILIC_",pesticide,"_transformed.RData",sep = "")
+load(file = temp_filename)
 
 X <- final_feature
 sampleID <- final_sample
@@ -76,7 +76,8 @@ fc.X_caret$Y <- as.factor(fc.X_caret$Y)
 levels(fc.X_caret$Y) = c("control","case")
 
 # For the rest
-load(file = "HILIC_OPs_redisual.RData")
+temp_filename <- paste("HILIC_",pesticide,"_residual.RData",sep = "")
+load(file = temp_filename)
 
 X <- final_feature
 sampleID <- final_sample
@@ -92,6 +93,8 @@ X_caret <- as.data.frame(cbind(X,Y))
 X_caret$Y <- as.factor(X_caret$Y)
 levels(X_caret$Y) = c("control","case")
 
+linkid <- final_linkid
+
 }
 
 ###################################################
@@ -100,9 +103,9 @@ levels(X_caret$Y) = c("control","case")
 
 # PCA
 print("PCA analysis")
-pca.datExpr = pca(X, ncomp = 10, center = TRUE, scale = TRUE)
+pca.datExpr = mixOmics::pca(X, ncomp = 10, center = TRUE, scale = TRUE)
 plot(pca.datExpr,main = "Variance explained by PCs using all features")
-plotIndiv(pca.datExpr, group = Y, ind.names = FALSE, 
+mixOmics::plotIndiv(pca.datExpr, group = Y, ind.names = FALSE, 
           legend = TRUE, title = 'PC score using all features after preprocessing')
 print("PCA done")
 
@@ -116,12 +119,6 @@ datExpr.plsda <- plsda(X, Y, ncomp = 10) # set ncomp to 10 for performance asses
 plotIndiv(datExpr.plsda, comp = 1:2,
           group = Y, ind.names = FALSE, 
           ellipse = TRUE, legend = TRUE, title = 'PLS score using all features after preprocessing')
-
-# Plot PLS1 vs. PLS2 with background
-background = background.predict(datExpr.plsda, comp.predicted=2, dist = "max.dist") 
-plotIndiv(datExpr.plsda, comp = 1:2,
-          group = Y, ind.names = FALSE, title = "PLS score using all features after preprocessing (Maximum distance)", ellipse = TRUE,
-          legend = TRUE,  background = background)
 
 # Assess the preformance of PLSDA, tuning, select number of component
 print("Optimize number of component if necessary")
@@ -216,20 +213,20 @@ ggplot2::ggplot(vip.for.selection,aes(x=time,y=vip)) +
   ggtitle("Type 2 manhattan plot (VIP vs retention time)")
 
 volcano <- vip.for.selection[,c(1:4)]
-volcano$group <- ifelse(volcano$vip>=vip_threshold&volcano$foldchange>=1,3,
-                        ifelse(volcano$vip>=vip_threshold&volcano$foldchange<=-1,2,
-                               ifelse(volcano$vip>=vip_threshold&abs(volcano$foldchange)<=1,1,0)))
+volcano$group <- ifelse(volcano$vip>=vip_threshold&volcano$foldchange>=0.58,3,
+                        ifelse(volcano$vip>=vip_threshold&volcano$foldchange<=-0.58,2,
+                               ifelse(volcano$vip>=vip_threshold&abs(volcano$foldchange)<=0.58,1,0)))
 volcano$size <- ifelse(volcano$group == 0,0,1)
 
 ggplot2::ggplot(volcano,aes(x=foldchange,y=vip)) +
   geom_point(aes(colour=cut(group, c(-Inf,0,1,2,Inf))),show.legend = FALSE) + 
-  xlim(-3.8,3.8) +
+  xlim(-2,2) +
   scale_fill_hue(c=20, l=20) + 
   scale_color_manual(values = c("#999999","goldenrod3","springgreen3","firebrick1")) + 
   scale_size_continuous(range = c(1,3)) +
   geom_hline(aes(yintercept = 2),color = "black",size = 0.5,linetype = "dashed") +
-  geom_vline(aes(xintercept = 1),color = "black",size = 0.5,linetype = "dashed") +
-  geom_vline(aes(xintercept = -1),color = "black",size = 0.5,linetype = "dashed") +
+  geom_vline(aes(xintercept = 0.58),color = "black",size = 0.5,linetype = "dashed") +
+  geom_vline(aes(xintercept = -0.58),color = "black",size = 0.5,linetype = "dashed") +
   labs(x="Log2(Fold Change)",y="VIP Score") +
   # theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   theme_bw(base_size = 12)+
@@ -239,7 +236,7 @@ ggplot2::ggplot(volcano,aes(x=foldchange,y=vip)) +
         plot.title = element_text(size=12, face="bold"),
         axis.title.x = element_text(size=12, face="bold"),
         axis.title.y = element_text(size=12, face="bold"))+
-  geom_label_repel(data = subset(volcano,volcano$vip>=3&abs(volcano$foldchange)>=1),
+  geom_label_repel(data = subset(volcano,volcano$vip>=3&abs(volcano$foldchange)>=0.58),
                    aes(label = paste("mz:",round(mz,4),sep = "")))+
   ggtitle("Volcano Plot")
 
@@ -257,9 +254,9 @@ sig.X <- X[,c(good_feats_ordered.name)]
 
 #pca using significant features
 print("PCA using significant features")
-sig.pca.datExpr = pca(sig.X, ncomp = 10, center = TRUE, scale = TRUE)
+sig.pca.datExpr = mixOmics::pca(sig.X, ncomp = 10, center = TRUE, scale = TRUE)
 plot(sig.pca.datExpr,main = "Variance explained by PCs using significant features")
-plotIndiv(sig.pca.datExpr, group = Y, ind.names = FALSE, 
+mixOmics::plotIndiv(sig.pca.datExpr, group = Y, ind.names = FALSE, 
           legend = TRUE, title = 'PC score using significant features')
 
 # PLSDA using significant features
@@ -269,19 +266,7 @@ plotIndiv(sig.datExpr.plsda, comp = 1:2,
           group = Y, ind.names = FALSE, 
           ellipse = TRUE, legend = TRUE, title = 'PLS score using significant features')
 
-# Plot PLS1 vs. PLS2 with background using significant features
-background = background.predict(sig.datExpr.plsda, comp.predicted=2, dist = "max.dist")
-plotIndiv(sig.datExpr.plsda, comp = 1:2,
-          group = Y, ind.names = FALSE, title = "PLS score using significant features (Maximum distance)", ellipse = TRUE,
-          legend = TRUE,  background = background)
-
-# Assess the preformance of PLSDA using significant features
 print("Assess the preformance")
-set.seed(1106)
-system.time(
-  sig.perf.plsda.datExpr <- perf(sig.datExpr.plsda, validation = "Mfold", folds = fold_cv,   ## 5 fold CV
-                           progressBar = TRUE, auc = TRUE, nrepeat = nrepeat, cpus = cpu)
-)
 
 # get ROC curve using significant features
 print("Generating ROC curve using top features on training set")
@@ -346,6 +331,7 @@ print(paste(paste("K-fold CV accuracy is",cv.acc.sigfeats,sep = " "),"%",sep = "
 
 #permutation test
 print("Calculating permuted CV accuracy")
+set.seed(1106)
 cv.acc.permut<-{}
 subdata <- t(roc.dataA)
 cv.acc.permut<-lapply(1:100,function(j){
@@ -397,60 +383,6 @@ save.mummichog_PLSDA_VIP2$`p-value`[save.mummichog_PLSDA_VIP2$vip>=vip_threshold
 save.mummichog_PLSDA_VIP2 <- save.mummichog_PLSDA_VIP2[order(save.mummichog_PLSDA_VIP2$`p-value`,-save.mummichog_PLSDA_VIP2$vip),]
 save.mummichog_PLSDA_VIP2 <- save.mummichog_PLSDA_VIP2[,c(1,2,5,4)]
 
-# ###################################################
-# ### IV. Annotation
-# ###################################################
-# 
-# #PLSDA_vip2
-# annotations_filename<-"C:/Users/QiYan/Dropbox/AIME/PNS_Ritz/HILICpos_ThermoHFQE_85to1275_mz_range/DBmatches_KEGG.txt"
-# annotations_filename_2<-"C:/Users/QiYan/Dropbox/AIME/PNS_Ritz/HILICpos_ThermoHFQE_85to1275_mz_range/DBmatches_HMDB.txt"
-# annotations_filename_3<-"C:/Users/QiYan/Dropbox/AIME/PNS_Ritz/HILICpos_ThermoHFQE_85to1275_mz_range/DBmatches_LipidMaps.txt"
-# 
-# number_significant_digits_rounding<-4
-# 
-# d_sigfeature<-save.plsresults.sigfeatures
-# dim(d_sigfeature)
-# 
-# a_KEGG<-read.table(annotations_filename,sep="\t",header=TRUE)
-# a_HMDB<-read.table(annotations_filename_2,sep="\t",header=TRUE)
-# a_LipidMaps<-read.table(annotations_filename_3,sep="\t",header=TRUE)
-# 
-# a_KEGG$mz<-round(a_KEGG$mz,number_significant_digits_rounding)
-# a_KEGG<-a_KEGG[,-c(20:2032)]
-# a_HMDB$mz<-round(a_HMDB$mz,number_significant_digits_rounding)
-# a_HMDB<-a_HMDB[,-c(20:2032)]
-# a_LipidMaps$mz<-round(a_LipidMaps$mz,number_significant_digits_rounding)
-# a_LipidMaps<-a_LipidMaps[,-c(20:2032)]
-# 
-# a_KEGG$time<-round(a_KEGG$time,2)
-# a_KEGG<-a_KEGG[,-c(20:2032)]
-# a_HMDB$time<-round(a_HMDB$time,2)
-# a_HMDB<-a_HMDB[,-c(20:2032)]
-# a_LipidMaps$time<-round(a_LipidMaps$time,2)
-# a_LipidMaps<-a_LipidMaps[,-c(20:2032)]
-# 
-# d_sigfeature$mz<-round(d_sigfeature$mz,number_significant_digits_rounding)
-# d_sigfeature$time<-round(d_sigfeature$time,2)
-# 
-# m_KEGG<-merge(a_KEGG,d_sigfeature,by.x=c("mz","time"),by.y=c("mz","time"))      ## Merged data
-# m_KEGG<-m_KEGG[order(m_KEGG$rank),]
-# m_HMDB<-merge(a_HMDB,d_sigfeature,by.x=c("mz","time"),by.y=c("mz","time"))
-# m_HMDB<-m_HMDB[order(m_HMDB$rank),]
-# m_LipidMaps<-merge(a_LipidMaps,d_sigfeature,by.x=c("mz","time"),by.y=c("mz","time"))
-# m_LipidMaps<-m_LipidMaps[order(m_LipidMaps$rank),]
-# 
-# save.KEGG<-subset(m_KEGG,select=c("mz","time","KEGGID","Name","rank"))
-# names(save.KEGG)[names(save.KEGG)=="Name"] <- "KEGG_name"
-# save.HMDB<-subset(m_HMDB,select=c("mz","time","HMDBID","Name","rank"))
-# names(save.HMDB)[names(save.HMDB)=="Name"] <- "HMDB_name"
-# save.LipidMaps<-subset(m_LipidMaps,select=c("mz","time","LM_ID","Name","rank"))
-# names(save.LipidMaps)[names(save.LipidMaps)=="Name"] <- "LipidMaps_name"
-# 
-# # save.all<-dplyr::full_join(save.HMDB,save.KEGG,by=c('mz','rank'))
-# # save.all<-dplyr::full_join(save.all,save.LipidMaps,by=c('mz','rank'))
-# 
-# rm(a_HMDB,a_KEGG,a_LipidMaps,m_HMDB,m_KEGG,m_LipidMaps)
-
 ###################################################
 ### IV. Save files
 ###################################################
@@ -475,5 +407,7 @@ sink()
 # Create mummichog files
 
 load(filename)
-mummichog_name <- paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_OPs/HILIC_mummichog/mummichog_input","_vip",vip_threshold,"fc",foldchange_threshold,"_",Sys.Date(),".txt",sep="")
+mummichog_name <- paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pesticide,"/HILIC_mummichog/mummichog_input","_vip",vip_threshold,"fc",foldchange_threshold,"_",Sys.Date(),".txt",sep="")
 write.table(save.mummichog_PLSDA_VIP2,file=mummichog_name,sep = "\t",row.names = F,quote = F)
+
+}

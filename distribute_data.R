@@ -11,13 +11,13 @@ load(file = "HILIC_sample_link.rda")
 # Parameters
 #############################
 
-outdata_class = c("redisual","transformed","raw")   # "raw", "transformed", "redisual"
-pest = "Glyphosates"   # "Pyrethroids", "Glyphosates", "Fungicides", "Neonicotinoids", "OPs", total"
-outdata_loc = "C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_Glyphosates/PANDA_input/"
+outdata_class = c("residual","transformed","raw")   # "raw", "transformed", "residual"
+pest = "Neonicotinoids"   # "Pyrethroids", "Glyphosates", "Fungicides", "Neonicotinoids", "OPs", total"
 online = TRUE
 
-setwd(outdata_loc)
+outdata_loc = paste("C:/Users/QiYan/Dropbox/AIME/Pesticide/HILICpos/HILIC_",pest,"/PANDA_input/",sep = "")
 
+setwd(outdata_loc)
 
 for(i in 1: length(outdata_class)){
   outdata_type <- outdata_class[i]
@@ -230,11 +230,11 @@ if(online){
   sample <- final_sample$SampleID
   final_feature <- cbind(sample,label,final_feature)
   
-  save(final_feature,final_linkid,final_sample, file = paste("HILIC_Online_OPs_",outdata_type,".RData",sep = ""))
-  write.table(final_feature,file=paste("HILIC_Online_OPs_",outdata_type,".txt",sep = ""),sep = "\t",row.names = F,quote = F)
+  save(final_feature,final_linkid,final_sample, file = paste("HILIC_Online_",pest,"_",outdata_type,".RData",sep = ""))
+  write.table(final_feature,file=paste("HILIC_Online_",pest,"_",outdata_type,".txt",sep = ""),sep = "\t",row.names = F,quote = F)
 
 }else{
-  save(final_feature,final_linkid,final_sample, file = paste("HILIC_OPs_",outdata_type,".RData",sep = ""))
+  save(final_feature,final_linkid,final_sample, file = paste("HILIC_",pest,"_",outdata_type,".RData",sep = ""))
 }
   
 }
